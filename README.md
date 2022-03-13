@@ -28,3 +28,15 @@ The following technologies will be used throughout the project:
 * terraform: infrastructure as a code
 * spark: transformation of raw data into final tables
 * GDS: reporting tool 
+
+## Running the project
+
+### terraform
+
+this step generates resources inside your Google Cloud Platform account
+
+* cd inside the terraform folder
+* if on windows, gcloud auth activate-service-account --key-file $GOOGLE_APPLICATION_CREDENTIALS (where tue GOOGLE_APPLICATION_CREDENTIALS have been added to the environmental variables of your User, referecing the json with the information)
+* teraform init
+* terraform plan (give you your GCP project ID)
+* terraform apply (give you your GCP project ID)
