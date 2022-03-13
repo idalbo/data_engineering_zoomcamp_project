@@ -3,7 +3,7 @@
 ## Dataset and Problem
 
 In this project, one of the datasets available in the website of the city of Toronto will be be used.
-Specifically, bike sharing data from 2019 on will be used. Three different types of data will be used:
+Specifically, bike sharing information from 2019 on will be processed and analyzed. Three different types of data will be used:
 
 * trip data from 2019 on, where data is stored in different file formats and needs to be processed specifically during extraction (source https://open.toronto.ca/dataset/bike-share-toronto-ridership-data/)
 * bikeways information in the city of Toronto (source https://open.toronto.ca/dataset/bikeways/)
