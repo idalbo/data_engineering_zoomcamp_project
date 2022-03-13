@@ -17,14 +17,14 @@ variable "storage_class" {
   default = "STANDARD"
 }
 
-variable "BQ_DATASET" {
+variable "BQ_DATASET_DEV" {
   description = "BigQuery Dataset hsoting raw data"
   type = string
-  default = "dtc_de_project_raw"
+  default = "dtc_de_project_dev"
 }
 
-# variable "BQ_DATASET_PROD" {
-#   description = "BigQuery Dataset hosting production data"
-#   type = string
-#   default = "dtc_de_project_prod"
-# }
+variable "BQ_DATASET_PROD" {
+  description = "BigQuery Dataset hosting production data"
+  type = string
+  default = "dtc_de_project_prod"
+}

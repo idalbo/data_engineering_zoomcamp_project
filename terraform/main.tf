@@ -41,16 +41,16 @@ resource "google_storage_bucket" "data-lake-bucket" {
 }
 
 # DWH
-# raw
-resource "google_bigquery_dataset" "dataset" {
-  dataset_id = var.BQ_DATASET
+# dev
+resource "google_bigquery_dataset" "dataset_dev" {
+  dataset_id = var.BQ_DATASET_DEV
   project    = var.project
   location   = var.region
 }
 
 # prod
-# resource "google_bigquery_dataset" "dataset" {
-#   dataset_id = var.BQ_DATASET_PROD
-#   project    = var.project
-#   location   = var.region
-# }
+resource "google_bigquery_dataset" "dataset_prod" {
+  dataset_id = var.BQ_DATASET_PROD
+  project    = var.project
+  location   = var.region
+}
