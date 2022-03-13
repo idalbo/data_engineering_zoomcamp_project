@@ -21,7 +21,7 @@ This is the an overview of the data circle:
 * here, tranformation will happen where fact and dimension tables will be created
 * these latter tables will be loaded into a reporting tool for dashboard generation
 
-The following technologies will be used throughout the project_
+The following technologies will be used throughout the project:
 
 * airflow: orchestration of tasks throughout the process
 * GCP: cloud platform hosting the data lake and DWH
