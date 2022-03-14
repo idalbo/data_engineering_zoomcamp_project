@@ -2,22 +2,23 @@
 
 ## Dataset and Problem
 
-In this project, one of the datasets available in the website of the city of Toronto will be be used.
-Specifically, bike sharing information from 2019 on will be processed and analyzed. Three different types of data will be used:
+In this project, the COVID19 data from the Italian Health Ministry repo will be used (source https://github.com/pcm-dpc/COVID-19). Different files will be loaded into a Google Cloud Storage bucket and then transformed and loaded into Google BigQuery, specifically:
 
-* trip data from 2019 on, where data is stored in different file formats and needs to be processed specifically during extraction (source https://open.toronto.ca/dataset/bike-share-toronto-ridership-data/)
-* bikeways information in the city of Toronto (source https://open.toronto.ca/dataset/bikeways/)
-* bicycle parking around the city (source https://open.toronto.ca/dataset/bicycle-parking-high-capacity-outdoor/)
+* national trend at a daily level
+* regional trend at a daily level
+* provincial trend at a daily level
+* medical supplies orders 
+* snapshot of population information at a regional level
 
-the goal of this project is to finally understand the trend in bike usage in the city in the past three years, as well as if the expansion of infrastructure for bikings and parking spot locations could be a contributing factor in increasing number of bike sharing rides. Of course, many other external factors contribute to changes in this behavior. As such, this project is not meant to imply any causality between these factors.
+the goal of this project is to have aggregated data into fact tables inside a DWH, such that easy connections with reporting tools can be established and basic exploratory data analyses can be carried out on the various datasets about COVID19 in Italy.
 
 ## Procedure
 
 This is the an overview of the data circle:
 
-* data will be downloaded locally from the website
-* after transformation, data will be dumped into a data lake
-* from the data lake, data will be loaded into a data warehouse
+* data will be downloaded locally from github
+* data will be dumped into a data lake
+* from the data lake, data will be loaded into a data warehouse and raw tables will be generated
 * here, tranformation will happen where fact and dimension tables will be created
 * these latter tables will be loaded into a reporting tool for dashboard generation
 
@@ -36,7 +37,7 @@ The following technologies will be used throughout the project:
 this step generates resources inside your Google Cloud Platform account
 
 * cd inside the terraform folder
-* if on windows, gcloud auth activate-service-account --key-file $GOOGLE_APPLICATION_CREDENTIALS (where tue GOOGLE_APPLICATION_CREDENTIALS have been added to the environmental variables of your User, referecing the json with the information)
-* teraform init
-* terraform plan (give you your GCP project ID)
-* terraform apply (give you your GCP project ID)
+* if on windows, execute `gcloud auth activate-service-account --key-file $GOOGLE_APPLICATION_CREDENTIALS` (where tue GOOGLE_APPLICATION_CREDENTIALS have been added to the environmental variables of your User, referecing the json with the information)
+* `teraform init`
+* `terraform plan` (give you your GCP project ID)
+* `terraform apply` (give you your GCP project ID)
