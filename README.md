@@ -35,7 +35,7 @@ The following technologies will be used throughout the project:
 
 ### terraform
 
-this step generates resources inside your Google Cloud Platform account
+This step generates resources inside your Google Cloud Platform account
 
 * cd inside the terraform folder
 * if on windows, execute `gcloud auth activate-service-account --key-file $GOOGLE_APPLICATION_CREDENTIALS` (where tue GOOGLE_APPLICATION_CREDENTIALS have been added to the environmental variables of your User, referecing the json with the information)
@@ -43,12 +43,37 @@ this step generates resources inside your Google Cloud Platform account
 * `terraform plan` (give you your GCP project ID)
 * `terraform apply` (give you your GCP project ID)
 
+### airflow
+
+The following steps will guide you through the initiation and deployment of a local airflow image that will allow you to run the entire orchestration, with the condition that you have an active GCP account.
+
+#### docker setup
+
+The docker image should run wihtout any issues, but you first need to change some variable before building and composing the file. Open the `.env` file and change the following variables:
+
+* `GCP_PROJECT_ID`: use your GCP project ID
+* `GCP_GCS_BUCKET`: change this to the bucket you want your data to be dumped and taken from
+
+#### structure of the airflow folder
+
+Within the airflow folder, you will find all the necessary file to create and start the docker image of airflow. If you browse to the `dag` folder, you will find the main DAG used in the project, as well as helper files holding functions or queries used within the DAG, specifically:
+
+* `dag_covid_italy`: the main DAG orchestrating the single tasks
+* `dag_utils`: a set of python functions called in specific tasks (mostly `PythonOperator`) 
+* `queries`: parameterized queries used within `BigQuery` operators
+
+#### running airflow
+
+open the terminal and cd into the `airflow` folder, then simply run `docker-compose up` and wait for the container to start. Note that it might take some minutes as `pyspark` needs to be installed as well. You can check the status of the container and its components by running `docker ps` in a new terminal window. When everything is up and running, open the browser of your choice and go to `http://localhost:8080/` to interact with the airflow UI.
+
+
+
 
 1. First way
 * save data to parquet
 * load data
 * move to DWH
 * create tables raw
-* use sparkt to transform
 * partition and cluster
+* use spark to transform
 * dashboard

@@ -1,2 +1,3 @@
-apache-airflow-providers-google
-pyarrow
+apache-airflow-providers-google==6.5.0
+pyarrow==7.0.0
+pyspark==3.2.1
