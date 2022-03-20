@@ -4,10 +4,7 @@
 
 In this project, the COVID19 data from the Italian Health Ministry repo will be used (source https://github.com/pcm-dpc/COVID-19). Different files will be loaded into a Google Cloud Storage bucket and then transformed and loaded into Google BigQuery, specifically:
 
-<<<<<<< HEAD
-=======
 * regional trend at a daily level
->>>>>>> 37d227b4ad8831380bd9fff872c76d23d5f7f374
 * provincial trend at a daily level
 * snapshot of population information at a regional level
 
