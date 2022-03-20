@@ -14,7 +14,7 @@ from airflow.providers.google.cloud.operators.bigquery import BigQueryCreateExte
 
 import pyarrow.csv as pv
 import pyarrow.parquet as pq
-from dag_utils import save_local, dump_to_gcs, blob_exists
+from dag_utils import save_local, dump_to_gcs, blob_exists, weekday_branch
 import queries as qs
 
 PROJECT_ID = os.environ.get("GCP_PROJECT_ID")
@@ -25,6 +25,7 @@ PATH_TO_LOCAL_HOME = os.environ.get("AIRFLOW_HOME")
 
 
 #DATES = "{{ execution_date.strftime(\'%Y%m%d\') }}"
+day_of_week = "{{ execution_date.isoweekday() }}"
 DATES = '20220318'
 temp_folder = 'dags/temp'
 
@@ -119,8 +120,8 @@ with DAG(
         bash_command=f"rm {PATH_TO_LOCAL_HOME}/{temp_folder}/{data_file_region}.parquet"
         )
 
-    bq_create_table_region_taks = BigQueryInsertJobOperator(
-        task_id="bq_create_table_region_taks",
+    bq_create_table_region_dev_taks = BigQueryInsertJobOperator(
+        task_id="bq_create_table_region_dev_taks",
         configuration={
             "query": {
                 "query": (qs.create_bq_table_from_external(BIGQUERY_DATASET_DEV, dest_table_region, origin_table_region, partition_col="data", partition=True, cluster_col="denominazione_regione", cluster=True)),
@@ -128,6 +129,7 @@ with DAG(
                 }
             }
         )
+
 
     # region tasks end
     # ----------------------------------------------------------------------------------------------
@@ -178,8 +180,8 @@ with DAG(
         bash_command=f"rm {PATH_TO_LOCAL_HOME}/{temp_folder}/{data_file_province}.parquet"
         )
 
-    bq_create_table_province_taks = BigQueryInsertJobOperator(
-        task_id="bq_create_table_province_taks",
+    bq_create_table_province_dev_taks = BigQueryInsertJobOperator(
+        task_id="bq_create_table_province_dev_taks",
         configuration={
             "query": {
                 "query": (qs.create_bq_table_from_external(BIGQUERY_DATASET_DEV, dest_table_province, origin_table_province, partition_col="data", partition=True, cluster_col="denominazione_provincia", cluster=True)),
@@ -187,6 +189,29 @@ with DAG(
                 }
             }
         )
+
+    bq_create_table_province_weekly_prod_taks = BigQueryInsertJobOperator(
+        task_id="bq_create_table_province_weekly_prod_taks",
+        configuration={
+            "query": {
+                "query": (qs.create_weekly_bq_table_prod_province()),
+                "useLegacySql": False,
+                }
+            }
+        )
+
+    skip_weekly_table_province_prod_task = DummyOperator(
+        task_id='skip_weekly_table_province_prod_task'
+        )
+
+    branch_weekly_province_prod_task = BranchPythonOperator(
+        task_id='branch_weekly_province_prod_task',
+        python_callable=weekday_branch,
+        op_kwargs={
+            "day_of_week": day_of_week,
+            },
+        )
+
 
     # province tasks end
     # ----------------------------------------------------------------------------------------------
@@ -249,8 +274,8 @@ with DAG(
         bash_command=f"rm {PATH_TO_LOCAL_HOME}/{temp_folder}/{data_file_pop}.parquet"
         )
 
-    bq_create_table_population_taks = BigQueryInsertJobOperator(
-        task_id="bq_create_table_population_taks",
+    bq_create_table_population_dev_taks = BigQueryInsertJobOperator(
+        task_id="bq_create_table_population_dev_taks",
         configuration={
             "query": {
                 "query": (qs.create_bq_table_from_external(BIGQUERY_DATASET_DEV, dest_table_pop, origin_table_pop)),
@@ -268,12 +293,14 @@ with DAG(
 
 
     start_task >> save_local_region_task  >> dump_to_gcs_region_task >> remove_local_region_task >> end_task
-    dump_to_gcs_region_task >> bigquery_external_table_region_task >> bq_create_table_region_taks >> end_task
+    dump_to_gcs_region_task >> bigquery_external_table_region_task >> bq_create_table_region_dev_taks >> end_task
 
     start_task >> save_local_province_task  >> dump_to_gcs_province_task >> remove_local_province_task >> end_task
-    dump_to_gcs_province_task >> bigquery_external_table_province_task >> bq_create_table_province_taks >> end_task
+    dump_to_gcs_province_task >> bigquery_external_table_province_task >> bq_create_table_province_dev_taks >> branch_weekly_province_prod_task
+    branch_weekly_province_prod_task >> bq_create_table_province_weekly_prod_taks >> end_task
+    branch_weekly_province_prod_task >> skip_weekly_table_province_prod_task >> end_task
 
     start_task >> branch_population_task 
     branch_population_task >> save_local_population_task >> dump_to_gcs_population_task >>  remove_local_population_task >> end_task
-    dump_to_gcs_population_task >> bigquery_external_table_population_task >> bq_create_table_population_taks >> end_task
+    dump_to_gcs_population_task >> bigquery_external_table_population_task >> bq_create_table_population_dev_taks >> end_task
     branch_population_task >> skip_local_population_task >> end_task

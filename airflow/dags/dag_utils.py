@@ -41,3 +41,9 @@ def blob_exists(bucket, object_name):
         return "save_local_population_task"
     else:
         return "skip_local_population_taks"
+
+def weekday_branch(day_of_week):
+    if day_of_week=="7":
+        return "bq_create_table_province_weekly_prod_taks"
+    else:
+        return "skip_weekly_table_province_prod_task"
