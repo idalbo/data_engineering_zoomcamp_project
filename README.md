@@ -17,7 +17,7 @@ This is the an overview of the data circle:
 * data will be downloaded locally from github
 * data will be dumped into a data lake
 * from the data lake, data will be loaded into a data warehouse and raw tables will be generated
-* here, tranformation will happen where fact and dimension tables will be created
+* here, tranformation will happen where fact tables will be created
 * these latter tables will be loaded into a reporting tool for dashboard generation
 
 The following technologies will be used throughout the project:
@@ -25,7 +25,7 @@ The following technologies will be used throughout the project:
 * airflow: orchestration of tasks throughout the process
 * GCP: cloud platform hosting the data lake and DWH
 * terraform: infrastructure as a code
-* spark: transformation of raw data into final tables
+* basic queries: transformation of tables (note that spark has issue with writing tables into BigQuery due to a bug into the hadoop jar, therefore this step could not be completed using this technology, although the code for it was readily written)
 * GDS: reporting tool 
 
 ## Running the project
@@ -43,6 +43,16 @@ This step generates resources inside your Google Cloud Platform account
 ### airflow
 
 The following steps will guide you through the initiation and deployment of a local airflow image that will allow you to run the entire orchestration, with the condition that you have an active GCP account.
+
+### prerequisites
+
+You should have a Google Cloud Platform subscription and create a service account with the following permissions:
+* BigQuery Admin
+* BigQuery Data Editor
+* BigQuery Job User
+* BigQuery User
+
+On top of that, you should download the json credential file for this service account and store it in the folder `HOME\.google\credentials` in your local. This file should be named `google_credentials`.
 
 #### docker setup
 
@@ -65,12 +75,3 @@ open the terminal and cd into the `airflow` folder, then simply run `docker-comp
 
 
 
-
-1. First way
-* save data to parquet
-* load data
-* move to DWH
-* create tables raw
-* partition and cluster
-* use spark to transform
-* dashboard
