@@ -75,7 +75,9 @@ Open the terminal and cd into the `airflow` folder, then simply run `docker-comp
 
 #### DAG structure
 
-#### GCP generated files and tables
+![image](https://user-images.githubusercontent.com/49947038/160274602-d55ff8df-0e9d-400b-989e-85971d747c29.png)
+
+### GCP generated files and tables
 
 If you run the DAG, even just for one day (or better, for one week), you should see in your Google Cloud Platform account the following new resources:
 
@@ -86,7 +88,7 @@ If you run the DAG, even just for one day (or better, for one week), you should 
 
 note that tables within the `dtc_de_project_prod` will only appear once you run the DAG for at least one week.
 
-#### Report in GDS
+### Report in GDS
 
 After the production table were ready, a Google Data Studio simple report was generated, you can access it through the following link:https://datastudio.google.com/reporting/038356f3-3fb1-411a-9c80-c962f5d2f583. For the sake of simplicty, only few simple visuals of regional data, as well as two KPI cards with population information were displayed. 
 
