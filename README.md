@@ -17,7 +17,7 @@ This is the overview of the ETL for this project:
 * data will be downloaded locally from a github repository as raw csv files
 * data will be dumped into a data lake into Google Cloud Storage (GCS)
 * from the data lake, data will be loaded into a data warehouse and raw tables will be generated into BigQuery
-* here, tranformation will happen where fact and dimension tables will be created into a different schema (production)
+* here, transformation will happen where fact and dimension tables will be created into a different schema (production)
 * the production tables will be linked to Google Data Studio and visualized
 
 The following technologies will be used throughout the project:
@@ -36,7 +36,7 @@ This step generates resources inside your Google Cloud Platform account
 
 * cd inside the terraform folder
 * if on windows, execute `gcloud auth activate-service-account --key-file $GOOGLE_APPLICATION_CREDENTIALS` (where the GOOGLE_APPLICATION_CREDENTIALS have been added to the environmental variables of your User, referencing the json with the credentials)
-* `teraform init`
+* `terraform init`
 * `terraform plan` (give you your GCP project ID)
 * `terraform apply` (give you your GCP project ID)
 
@@ -56,7 +56,7 @@ On top of that, you should download the json credential file for this service ac
 
 #### docker setup
 
-Browse into the `airflow` folder, here you will find the `Dockerfile` and the `docker-compose.yml` files, which are used to start your docker image. This should run wihtout any issues, but you first need to change some variables before composing it. Open the `.env` file and change the following variables:
+Browse into the `airflow` folder, here you will find the `Dockerfile` and the `docker-compose.yml` files, which are used to start your docker image. This should run without any issues, but you first need to change some variables before composing it. Open the `.env` file and change the following variables:
 
 * `GCP_PROJECT_ID`: use your GCP project ID
 * `GCP_GCS_BUCKET`: change this to the bucket you want your data to be dumped and taken from
@@ -77,9 +77,9 @@ Open the terminal and cd into the `airflow` folder, then simply run `docker-comp
 
 ![image](https://user-images.githubusercontent.com/49947038/160274602-d55ff8df-0e9d-400b-989e-85971d747c29.png)
 
-As you can see from the image above, there are three different graphs going from the dummy start taks to the dummy end task. As the upper one is a rather static branch, the middle and bottom are very similar, with only difference being which data the deal with. To go more into details:
+As you can see from the image above, there are three different graphs going from the dummy start task to the dummy end task. As the upper one is a rather static branch, the middle and bottom are very similar, with only difference being which data the deal with. To go more into details:
 
-* the graph starting with `branch_population_task` looks if the static file with the snapshot of the italian population already exists in the destination bucket. If yes, then this branch reaches the end, if no, then the file is locally downloaded, uploaded into the bucker under the `population` folder, and then in-turn an external table, a staging table, and a fact production table are generated
+* the graph starting with `branch_population_task` looks if the static file with the snapshot of the Italian population already exists in the destination bucket. If yes, then this branch reaches the end, if no, then the file is locally downloaded, uploaded into the bucker under the `population` folder, and then in-turn an external table, a staging table, and a fact production table are generated
 * the other two branches deal, with the same logic, with regional and provincial daily data for COVID in Italy. First, the file with the daily data is saved locally and then uploaded to the selected bucket, either in the `province` or `region` folder. Then, an external table with all the files for each folder is generated in BiqQuery (`external_table_tasks`). From this point, a `BranchOperator` is used to determine if the staging table for each of the two dataset already exists in BigQuery: if not, the table is created with partition and cluster anew and loaded with data, if yes, then data are loaded into the staging table upon verification that no duplicates are present. The next step is again a `BranchOperator`, where the day of the week is fed to this python function: if the day of the `logical_date` of Airflow is Sunday (i.e., in this case it will run on a Monday), then the graph follows the `branch_append_or_create_prod_task`, otherwise both `province` and `region` branches reach the end. In case the run is on a Monday, another `BranchOperator` checks if the destination table already exists in production: if yes, then data are loaded into a partition and cluster table upon checking for duplicates, if no, then the table is created from scratch and loaded with data
 
 The DAG is set to run every day at 5 UTC
@@ -91,13 +91,13 @@ If you run the DAG, even just for one day (or better, for one week), you should 
 * in your defined Google Data Storage bucket, you will see three subfolders: `population`, `province`, and `region`, where the raw data in `.parquet` format are stored
 * within your Google BigQuery data warehouse, you will see two new schemas, namely:
   * `dtc_de_project_dev`: here you will find external tables generated by using the data in the bucket (with the suffix `_raw`), and partitioned&clustered tables obtained from the raw data
-  * `dtc_de_project_prod`: here you will find aggregated fact tables of regional and provincial covid numbers in Italy at a weekly level (note that by mistake they are called `dim_` here, but they should be `fact_`), plus a dimension table containing a snapshot of the italian population numbers (again, by mistake here I switched the prefix and this is called `fact_`)
+  * `dtc_de_project_prod`: here you will find aggregated fact tables of regional and provincial covid numbers in Italy at a weekly level (note that by mistake they are called `dim_` here, but they should be `fact_`), plus a dimension table containing a snapshot of the Italian population numbers (again, by mistake here I switched the prefix and this is called `fact_`)
 
 note that tables within the `dtc_de_project_prod` will only appear once you run the DAG for at least one week.
 
 ### Report in GDS
 
-After the production table were ready, a Google Data Studio simple report was generated, you can access it through the following link:https://datastudio.google.com/reporting/038356f3-3fb1-411a-9c80-c962f5d2f583. For the sake of simplicty, only few simple visuals of regional data, as well as two KPI cards with population information were displayed. 
+After the production table were ready, a Google Data Studio simple report was generated, you can access it through the following link:https://datastudio.google.com/reporting/038356f3-3fb1-411a-9c80-c962f5d2f583. For the sake of simplicity, only few simple visuals of regional data, as well as two KPI cards with population information were displayed. 
 
 ![image](https://user-images.githubusercontent.com/49947038/160274413-1be98a1f-13a3-4088-8e5c-6fcb05bef4ec.png)
 
