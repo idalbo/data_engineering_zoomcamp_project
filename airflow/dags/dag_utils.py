@@ -1,5 +1,8 @@
 from google.cloud import storage
+from google.cloud import bigquery
+from google.cloud.exceptions import NotFound
 import pandas as pd
+import numpy as np
 
 
 def save_local(data_url, temp_folder, data_file, path_to_local_home, date_col=None, limit_col=None):
@@ -8,22 +11,15 @@ def save_local(data_url, temp_folder, data_file, path_to_local_home, date_col=No
         df = df.iloc[:, :limit_col]
     if date_col:
         df[date_col] = pd.to_datetime(df[date_col])
+    for col in df.columns:
+        if df[col].dtypes == np.int64:
+            df[col] = df[col].astype(float)
     df.to_parquet(f"{path_to_local_home}/{temp_folder}/{data_file}.parquet", index=False)
 
 
 def dump_to_gcs(bucket, object_name, local_file):
-    """
-    Ref: https://cloud.google.com/storage/docs/uploading-objects#storage-upload-object-python
-    :param bucket: GCS bucket name
-    :param object_name: target path & file-name
-    :param local_file: source path & file-name
-    :return:
-    """
-    # WORKAROUND to prevent timeout for files > 6 MB on 800 kbps upload speed.
-    # (Ref: https://github.com/googleapis/python-storage/issues/74)
     storage.blob._MAX_MULTIPART_SIZE = 5 * 1024 * 1024  # 5 MB
     storage.blob._DEFAULT_CHUNKSIZE = 5 * 1024 * 1024  # 5 MB
-    # End of Workaround
 
     client = storage.Client()
     bucket = client.bucket(bucket)
@@ -42,8 +38,17 @@ def blob_exists(bucket, object_name):
     else:
         return "skip_local_population_taks"
 
-def weekday_branch(day_of_week):
+def weekday_branch(day_of_week, actual, dummy):
     if day_of_week=="7":
-        return "bq_create_table_province_weekly_prod_taks"
+        return actual 
     else:
-        return "skip_weekly_table_province_prod_task"
+        return dummy
+
+def table_exists(table, create_task, append_task):
+    client = bigquery.Client()
+    table_id = table
+    try:
+        client.get_table(table_id) 
+        return append_task
+    except NotFound:
+        return create_task

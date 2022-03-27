@@ -5,30 +5,21 @@ FROM apache/airflow:2.2.3
 ENV AIRFLOW_HOME=/opt/airflow
 
 USER root
-RUN apt-get update -qq && apt-get install vim -qqq
-# RUN apt install default-jdk
-# git gcc g++ -qqq
-# install here debugger for python
+RUN apt-get update -qq \
+    && apt-get install vim -qqq \
+    && apt-get install -y openjdk-11-jdk \
+    && apt-get install -y ant  \
+    && apt-get clean;
 
-RUN apt update && \
-    apt-get install -y openjdk-11-jdk && \
-    apt-get install -y ant && \
-    apt-get clean;
-
+# Set JAVA_HOME
 ENV JAVA_HOME /usr/lib/jvm/java-11-openjdk-amd64/
 RUN export JAVA_HOME
 
-ENV SPARK_HOME=/opt/spark
-RUN export PATH=$PATH:$SPARK_HOME/bin:$SPARK_HOME/sbin
+# RUN mkdir -p "${JAVA_HOME}jars"
+# RUN  curl -fL "https://storage.googleapis.com/hadoop-lib/gcs/gcs-connector-hadoop3-latest.jar" --output "${JAVA_HOME}jars/gcs-connector-hadoop3-latest.jar"
 
 COPY requirements.txt .
-RUN pip install --no-cache-dir -r requirements.txt pyspark
-
-ENV PYTHONPATH="${SPARK_HOME}/python/:$PYTHONPATH"
-ENV PYTHONPATH="${SPARK_HOME}/python/lib/py4j-0.10.9-src.zip:$PYTHONPATH"
-
-
-# Ref: https://airflow.apache.org/docs/docker-stack/recipes.html
+RUN pip install --no-cache-dir -r requirements.txt
 
 SHELL ["/bin/bash", "-o", "pipefail", "-e", "-u", "-x", "-c"]
 
@@ -49,20 +40,6 @@ RUN DOWNLOAD_URL="https://dl.google.com/dl/cloudsdk/channels/rapid/downloads/goo
         --quiet \
     && rm -rf "${TMP_DIR}" \
     && gcloud --version
-
-# RUN wget https://download.java.net/java/GA/jdk11/9/GPL/openjdk-11.0.2_linux-x64_bin.tar.gz \
-#     && tar xzfv openjdk-11.0.2_linux-x64_bin.tar.gz \
-#     && rm openjdk-11.0.2_linux-x64_bin.tar.gz
-
-# ENV JAVA_HOME="${HOME}/spark/jdk-11.0.2"
-# ENV PATH="${JAVA_HOME}/bin:${PATH}"
-
-# RUN wget https://dlcdn.apache.org/spark/spark-3.0.3/spark-3.0.3-bin-hadoop3.2.tgz \
-#     && tar xzfv spark-3.0.3-bin-hadoop3.2.tgz \
-#     && rm spark-3.0.3-bin-hadoop3.2.tgz
-
-# ENV SPARK_HOME="${HOME}/spark/spark-3.0.3-bin-hadoop3.2"
-# ENV PATH="${SPARK_HOME}/bin:${PATH}"
 
 WORKDIR $AIRFLOW_HOME
 
