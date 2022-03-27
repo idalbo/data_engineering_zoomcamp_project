@@ -80,7 +80,9 @@ Open the terminal and cd into the `airflow` folder, then simply run `docker-comp
 As you can see from the image above, there are three different graphs going from the dummy start taks to the dummy end task. As the upper one is a rather static branch, the middle and bottom are very similar, with only difference being which data the deal with. To go more into details:
 
 * the graph starting with `branch_population_task` looks if the static file with the snapshot of the italian population already exists in the destination bucket. If yes, then this branch reaches the end, if no, then the file is locally downloaded, uploaded into the bucker under the `population` folder, and then in-turn an external table, a staging table, and a fact production table are generated
-* 
+* the other two branches deal, with the same logic, with regional and provincial daily data for COVID in Italy. First, the file with the daily data is saved locally and then uploaded to the selected bucket, either in the `province` or `region` folder. Then, an external table with all the files for each folder is generated in BiqQuery (`external_table_tasks`). From this point, a `BranchOperator` is used to determine if the staging table for each of the two dataset already exists in BigQuery: if not, the table is created with partition and cluster anew and loaded with data, if yes, then data are loaded into the staging table upon verification that no duplicates are present. The next step is again a `BranchOperator`, where the day of the week is fed to this python function: if the day of the `logical_date` of Airflow is Sunday (i.e., in this case it will run on a Monday), then the graph follows the `branch_append_or_create_prod_task`, otherwise both `province` and `region` branches reach the end. In case the run is on a Monday, another `BranchOperator` checks if the destination table already exists in production: if yes, then data are loaded into a partition and cluster table upon checking for duplicates, if no, then the table is created from scratch and loaded with data
+
+The DAG is set to run every day at 5 UTC
 
 ### GCP generated files and tables
 
