@@ -88,5 +88,15 @@ note that tables within the `dtc_de_project_prod` will only appear once you run 
 
 #### Report in GDS
 
+After the production table were ready, a Google Data Studio simple report was generated, you can access it through the following link:https://datastudio.google.com/reporting/038356f3-3fb1-411a-9c80-c962f5d2f583. For the sake of simplicty, only few simple visuals of regional data, as well as two KPI cards with population information were displayed. 
 
+![image](https://user-images.githubusercontent.com/49947038/160274413-1be98a1f-13a3-4088-8e5c-6fcb05bef4ec.png)
+
+The time series in the upper part of the dashboard shows the development of new positive cases in Italy through the pandemic, where also the delta of the positive (difference between current and previous week) and the average deceased people due to COVID are displayed.
+
+The bottom bar chart shows the distribution of COVID cases in Italy per region, in descending order. Additionally to the two population specific KPI cards, two additional cards show the total detected cases of COVID, as well as the average deceased population. 
+
+Two filters, one for limiting the time window and one for selecting only specific regions, are available. 
+
+With the generated tables in the DWH, additional charts could be generated to get more insights, for example at the provincial level, as well as a better link with the population static data. 
 
