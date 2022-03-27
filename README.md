@@ -8,17 +8,17 @@ In this project, the COVID19 data from the Italian Health Ministry repo will be 
 * provincial trend at a daily level
 * snapshot of population information at a regional level
 
-the goal of this project is to have aggregated data into fact tables inside a DWH, such that easy connections with reporting tools can be established and basic exploratory data analyses can be carried out on the various datasets about COVID19 in Italy. Data will be aggregated at a weekly level and compared against the population baseline for each region.
+the goal of this project is to have aggregated data into fact tables inside a DWH, such that easy connections with reporting tools can be established and basic exploratory data analyses can be carried out on the various datasets about COVID19 in Italy. Data will be aggregated at a weekly level and information about the population will be given.
 
 ## Procedure
 
-This is the an overview of the data circle:
+This is the overview of the ETL for this project:
 
-* data will be downloaded locally from github
-* data will be dumped into a data lake
-* from the data lake, data will be loaded into a data warehouse and raw tables will be generated
-* here, tranformation will happen where fact tables will be created
-* these latter tables will be loaded into a reporting tool for dashboard generation
+* data will be downloaded locally from a github repository as raw csv files
+* data will be dumped into a data lake into Google Cloud Storage (GCS)
+* from the data lake, data will be loaded into a data warehouse and raw tables will be generated into BigQuery
+* here, tranformation will happen where fact and dimension tables will be created into a different schema (production)
+* the production tables will be linked to Google Data Studio and visualized
 
 The following technologies will be used throughout the project:
 
@@ -35,14 +35,14 @@ The following technologies will be used throughout the project:
 This step generates resources inside your Google Cloud Platform account
 
 * cd inside the terraform folder
-* if on windows, execute `gcloud auth activate-service-account --key-file $GOOGLE_APPLICATION_CREDENTIALS` (where tue GOOGLE_APPLICATION_CREDENTIALS have been added to the environmental variables of your User, referecing the json with the information)
+* if on windows, execute `gcloud auth activate-service-account --key-file $GOOGLE_APPLICATION_CREDENTIALS` (where the GOOGLE_APPLICATION_CREDENTIALS have been added to the environmental variables of your User, referencing the json with the credentials)
 * `teraform init`
 * `terraform plan` (give you your GCP project ID)
 * `terraform apply` (give you your GCP project ID)
 
 ### airflow
 
-The following steps will guide you through the initiation and deployment of a local airflow image that will allow you to run the entire orchestration, with the condition that you have an active GCP account.
+The following steps will guide you through the initiation and deployment of a local airflow image that will allow you to run the entire orchestration, with the condition that you have an active GCP account (if you don't and would like to have one, please follow these steps: https://github.com/DataTalksClub/data-engineering-zoomcamp/tree/main/week_1_basics_n_setup/1_terraform_gcp).
 
 ### prerequisites
 
@@ -52,26 +52,26 @@ You should have a Google Cloud Platform subscription and create a service accoun
 * BigQuery Job User
 * BigQuery User
 
-On top of that, you should download the json credential file for this service account and store it in the folder `HOME\.google\credentials` in your local. This file should be named `google_credentials`.
+On top of that, you should download the json credential file for this service account and store it in the folder `HOME\.google\credentials` in your local computer (the `HOME` folder is usually your user folder. This file should be named `google_credentials`.
 
 #### docker setup
 
-The docker image should run wihtout any issues, but you first need to change some variable before building and composing the file. Open the `.env` file and change the following variables:
+Browse into the `airflow` folder, here you will find the `Dockerfile` and the `docker-compose.yml` files, which are used to start your docker image. This should run wihtout any issues, but you first need to change some variables before composing it. Open the `.env` file and change the following variables:
 
 * `GCP_PROJECT_ID`: use your GCP project ID
 * `GCP_GCS_BUCKET`: change this to the bucket you want your data to be dumped and taken from
 
 #### structure of the airflow folder
 
-Within the airflow folder, you will find all the necessary file to create and start the docker image of airflow. If you browse to the `dag` folder, you will find the main DAG used in the project, as well as helper files holding functions or queries used within the DAG, specifically:
+Within the airflow folder, you will find all the necessary file to start the docker image of airflow. If you browse to the `dag` folder, you will see several `.py` files used in the project, specifically:
 
-* `dag_covid_italy`: the main DAG orchestrating the single tasks
-* `dag_utils`: a set of python functions called in specific tasks (mostly `PythonOperator`) 
+* `dag_covid_italy`: the main DAG orchestrating the single tasks, this is what you will see when opening the airflow UI
+* `dag_utils`: a set of python functions called in specific tasks (mostly `PythonOperator` or `BranchOperator`) 
 * `queries`: parameterized queries used within `BigQuery` operators
 
 #### running airflow
 
-open the terminal and cd into the `airflow` folder, then simply run `docker-compose up` and wait for the container to start. Note that it might take some minutes as `pyspark` needs to be installed as well. You can check the status of the container and its components by running `docker ps` in a new terminal window. When everything is up and running, open the browser of your choice and go to `http://localhost:8080/` to interact with the airflow UI.
+Open the terminal and cd into the `airflow` folder, then simply run `docker-compose up` and wait for the container to start. Note that it might take some minutes as `pyspark` needs to be installed as well. You can check the status of the container and its components by running `docker ps` in a new terminal window. When everything is up and running (it takes about 5 minutes, you can check when all services are `healthy` through the previously mentioned terminal command), open the browser of your choice and go to `http://localhost:8080/` to interact with the airflow UI.
 
 
 
