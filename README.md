@@ -44,7 +44,7 @@ This step generates resources inside your Google Cloud Platform account
 
 The following steps will guide you through the initiation and deployment of a local airflow image that will allow you to run the entire orchestration, with the condition that you have an active GCP account (if you don't and would like to have one, please follow these steps: https://github.com/DataTalksClub/data-engineering-zoomcamp/tree/main/week_1_basics_n_setup/1_terraform_gcp).
 
-### prerequisites
+#### prerequisites
 
 You should have a Google Cloud Platform subscription and create a service account with the following permissions:
 * BigQuery Admin
@@ -76,6 +76,11 @@ Open the terminal and cd into the `airflow` folder, then simply run `docker-comp
 #### DAG structure
 
 ![image](https://user-images.githubusercontent.com/49947038/160274602-d55ff8df-0e9d-400b-989e-85971d747c29.png)
+
+As you can see from the image above, there are three different graphs going from the dummy start taks to the dummy end task. As the upper one is a rather static branch, the middle and bottom are very similar, with only difference being which data the deal with. To go more into details:
+
+* the graph starting with `branch_population_task` looks if the static file with the snapshot of the italian population already exists in the destination bucket. If yes, then this branch reaches the end, if no, then the file is locally downloaded, uploaded into the bucker under the `population` folder, and then in-turn an external table, a staging table, and a fact production table are generated
+* 
 
 ### GCP generated files and tables
 
