@@ -73,5 +73,17 @@ Within the airflow folder, you will find all the necessary file to start the doc
 
 Open the terminal and cd into the `airflow` folder, then simply run `docker-compose up` and wait for the container to start. Note that it might take some minutes as `pyspark` needs to be installed as well. You can check the status of the container and its components by running `docker ps` in a new terminal window. When everything is up and running (it takes about 5 minutes, you can check when all services are `healthy` through the previously mentioned terminal command), open the browser of your choice and go to `http://localhost:8080/` to interact with the airflow UI.
 
+#### DAG structure
+
+#### GCP generated files and tables
+
+If you run the DAG, even just for one day (or better, for one week), you should see in your Google Cloud Platform account the following new resources:
+
+* in your defined Google Data Storage bucket, you will see three subfolders: `population`, `province`, and `region`, where the raw data in `.parquet` format are stored
+* within your Google BigQuery data warehouse, you will see two new schemas, namely:
+** fdfs
+
+#### Report in GDS
+
 
 
