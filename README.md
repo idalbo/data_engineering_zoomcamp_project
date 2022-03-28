@@ -98,7 +98,7 @@ note that tables within the `dtc_de_project_prod` will only appear once you run 
 
 ### Report in GDS
 
-After the production table were ready, a Google Data Studio simple report was generated, you can access it through the following link:https://datastudio.google.com/reporting/038356f3-3fb1-411a-9c80-c962f5d2f583. For the sake of simplicity, only few simple visuals of regional data, as well as two KPI cards with population information were displayed. 
+After the production table were ready, a Google Data Studio simple report was generated, you can access it through the [following link](https://datastudio.google.com/reporting/038356f3-3fb1-411a-9c80-c962f5d2f583). For the sake of simplicity, only few simple visuals of regional data, as well as two KPI cards with population information were displayed. 
 
 ![image](https://user-images.githubusercontent.com/49947038/160274413-1be98a1f-13a3-4088-8e5c-6fcb05bef4ec.png)
 
