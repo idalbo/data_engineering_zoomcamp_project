@@ -2,13 +2,13 @@
 
 ## Dataset and Problem
 
-In this project, the COVID19 data from the Italian Health Ministry repo will be used ([source](https://github.com/pcm-dpc/COVID-19)). Different files will be loaded into a Google Cloud Storage bucket and then transformed and loaded into Google BigQuery, specifically:
+COVID19 and the consequences of the spreading virus at a pandemic level have been shaping our lives for the last two and a half year. In this project, I would like to focus on the solidification and integration of data with different granularity in one place (inside a DWH), using daily updates from the Italian Health Ministry ([source](https://github.com/pcm-dpc/COVID-19)). Different files will be loaded into a Google Cloud Storage bucket and then transformed and loaded into Google BigQuery, specifically:
 
 * regional trend at a daily level
 * provincial trend at a daily level
 * snapshot of population information at a regional level
 
-the goal of this project is to have aggregated data into fact tables inside a DWH, such that easy connections with reporting tools can be established and basic exploratory data analyses can be carried out on the various datasets about COVID19 in Italy. Data will be aggregated at a weekly level and information about the population will be given.
+The final goal would be to bring the created tables into a reporting tool to shed light into regional and provincial trends all in one tool, where filters will play an important role for the consumers to be able to gain insights about their questions. Data will be aggregated at a weekly level and information about the population will be given at a very high-level (note that due to the short length of this process, the generated dashboard is only a simple example of how the generated tables could be used).
 
 ## Procedure
 
