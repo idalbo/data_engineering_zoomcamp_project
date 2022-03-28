@@ -30,6 +30,17 @@ The following technologies will be used throughout the project:
 
 ## Running the project
 
+### prerequisites
+
+You should have a Google Cloud Platform subscription (If you don't have a GCP account and you would like to follow along completelly, please follow [this link](https://github.com/DataTalksClub/data-engineering-zoomcamp/blob/main/week_1_basics_n_setup/1_terraform_gcp/2_gcp_overview.md), you will get 300$ for three months usage) and create a `service account` with the following permissions:
+
+* BigQuery Admin
+* BigQuery Data Editor
+* BigQuery Job User
+* BigQuery User
+
+On top of that, you should download the json credential file for this service account and store it in the folder `HOME\.google\credentials` in your local computer (the `HOME` folder is usually your user folder). This file should be named `google_credentials`.
+
 ### terraform
 
 This step generates resources inside your Google Cloud Platform account
@@ -42,18 +53,7 @@ This step generates resources inside your Google Cloud Platform account
 
 ### airflow
 
-The following steps will guide you through the initiation and deployment of a local airflow image that will allow you to run the entire orchestration, with the condition that you have an active GCP account. If you don't have a GCP account and you would like to follow along completelly, please follow [this link](https://github.com/DataTalksClub/data-engineering-zoomcamp/blob/main/week_1_basics_n_setup/1_terraform_gcp/2_gcp_overview.md), you will get 300$ for three months usage.
-
-#### prerequisites
-
-You should have a Google Cloud Platform subscription and create a `service account` with the following permissions:
-
-* BigQuery Admin
-* BigQuery Data Editor
-* BigQuery Job User
-* BigQuery User
-
-On top of that, you should download the json credential file for this service account and store it in the folder `HOME\.google\credentials` in your local computer (the `HOME` folder is usually your user folder. This file should be named `google_credentials`.
+The following steps will guide you through the initiation and deployment of a local airflow image that will allow you to run the entire orchestration, with the condition that you have an active GCP account. 
 
 #### docker setup
 
