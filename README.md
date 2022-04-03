@@ -8,7 +8,7 @@ COVID19 and the consequences of the spreading virus at a pandemic level have bee
 * provincial trend at a daily level
 * snapshot of population information at a regional level
 
-The final goal would be to bring the created tables into a reporting tool to shed light into regional and provincial trends all in one tool, where filters will play an important role for the consumers to be able to gain insights about their questions. Data will be aggregated at a weekly level and information about the population will be given at a very high-level (note that due to the short length of this process, the generated dashboard is only a simple example of how the generated tables could be used).
+The final goal would be to bring the created tables into a reporting tool to shed light into regional and provincial trends all in one place, where filters will play an important role for the consumers to be able to gain insights about their questions. Data will be aggregated at a weekly level and information about the population will be given at a very high-level (note that due to the short length of this process, the generated dashboard is only a simple example of how the generated tables could be used).
 
 ## Procedure
 
